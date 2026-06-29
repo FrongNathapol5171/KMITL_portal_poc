@@ -1,96 +1,115 @@
 "use client";
 
+import Box from "@mui/material/Box";
+import Typography from "@mui/material/Typography";
+import LinearProgress from "@mui/material/LinearProgress";
 import { CardData } from "./MessageBubble";
 
-function GradeTable({ data }: { data: Record<string, unknown>[] }) {
-  if (!data.length) return <p className="text-sm" style={{ color: "var(--text-muted)" }}>ไม่มีข้อมูล</p>;
+function GradeTable({ data, dark }: { data: Record<string, unknown>[]; dark: boolean }) {
+  if (!data.length) return (
+    <Typography variant="body2" sx={{ color: dark ? "#a3a3ab" : "#5f6368", mt: 1 }}>ไม่มีข้อมูล</Typography>
+  );
   const keys = Object.keys(data[0]);
   return (
-    <div className="overflow-x-auto rounded-[var(--radius-md)] border mt-2"
-         style={{ borderColor: "var(--border)" }}>
-      <table className="w-full text-sm border-collapse">
-        <thead>
-          <tr style={{ background: "var(--surface)" }}>
+    <Box sx={{ mt: 1.5, overflowX: "auto", borderRadius: 2,
+      border: "1px solid", borderColor: dark ? "rgba(255,255,255,0.1)" : "rgba(0,0,0,0.07)" }}>
+      <Box component="table" sx={{ width: "100%", borderCollapse: "collapse", minWidth: 280 }}>
+        <Box component="thead">
+          <Box component="tr" sx={{ background: dark ? "rgba(255,255,255,0.05)" : "rgba(0,0,0,0.02)" }}>
             {keys.map((k) => (
-              <th key={k} className="text-left px-3 py-2 font-medium text-xs uppercase tracking-wide"
-                  style={{ color: "var(--text-muted)", borderBottom: "1px solid var(--border)" }}>
+              <Box component="th" key={k} sx={{
+                textAlign: "left", px: 1.5, py: 1,
+                fontSize: "0.7rem", fontWeight: 600, textTransform: "uppercase",
+                letterSpacing: 0.6, color: dark ? "#a3a3ab" : "#5f6368",
+                borderBottom: "1px solid", borderColor: dark ? "rgba(255,255,255,0.08)" : "rgba(0,0,0,0.06)",
+              }}>
                 {k.replace(/_/g, " ")}
-              </th>
+              </Box>
             ))}
-          </tr>
-        </thead>
-        <tbody>
+          </Box>
+        </Box>
+        <Box component="tbody">
           {data.map((row, i) => (
-            <tr key={i} style={{ borderBottom: i < data.length - 1 ? "1px solid var(--border)" : "none" }}>
+            <Box component="tr" key={i} sx={{
+              "&:not(:last-child) td": { borderBottom: "1px solid", borderColor: dark ? "rgba(255,255,255,0.06)" : "rgba(0,0,0,0.05)" },
+              "&:hover": { background: dark ? "rgba(255,255,255,0.03)" : "rgba(0,0,0,0.01)" },
+            }}>
               {keys.map((k) => (
-                <td key={k} className="px-3 py-2" style={{ color: "var(--text)" }}>
+                <Box component="td" key={k} sx={{
+                  px: 1.5, py: 1, fontSize: "0.8125rem",
+                  color: k === "grade"
+                    ? (String(row[k]) === "A" ? "#1e8e3e" : String(row[k]) === "F" ? "#d93025" : dark ? "#e6e6e9" : "#1b1b1f")
+                    : (dark ? "#e6e6e9" : "#1b1b1f"),
+                  fontWeight: k === "grade" ? 700 : 400,
+                }}>
                   {String(row[k] ?? "—")}
-                </td>
+                </Box>
               ))}
-            </tr>
+            </Box>
           ))}
-        </tbody>
-      </table>
-    </div>
+        </Box>
+      </Box>
+    </Box>
   );
 }
 
-function ProgressCard({ data }: { data: Record<string, unknown>[] }) {
+function ProgressCard({ data, dark }: { data: Record<string, unknown>[]; dark: boolean }) {
   const d: Record<string, unknown> = data[0] ?? {};
+  const earned = Number(d.credits_earned ?? 0);
+  const total  = Number(d.total_credits_required ?? 1);
+  const pct    = Math.min(100, (earned / total) * 100);
+
   return (
-    <div className="mt-2 rounded-[var(--radius-lg)] border p-4 space-y-3"
-         style={{ borderColor: "var(--border)", background: "var(--surface)" }}>
-      <div className="text-sm font-semibold" style={{ color: "var(--text)" }}>
+    <Box sx={{ mt: 1.5 }}>
+      <Typography variant="body2" sx={{ fontWeight: 600, mb: 1.5,
+        color: dark ? "#e6e6e9" : "#1b1b1f" }}>
         {String(d.program_name ?? "")}
-      </div>
-      <div className="flex gap-4 text-sm">
-        <div>
-          <div className="text-xs" style={{ color: "var(--text-muted)" }}>GPAX</div>
-          <div className="text-lg font-semibold" style={{ color: "var(--color-primary)" }}>
-            {String(d.gpax ?? "—")}
-          </div>
-        </div>
-        <div>
-          <div className="text-xs" style={{ color: "var(--text-muted)" }}>หน่วยกิตที่ได้</div>
-          <div className="text-lg font-semibold" style={{ color: "var(--text)" }}>
-            {String(d.credits_earned ?? "—")}
-          </div>
-        </div>
-        <div>
-          <div className="text-xs" style={{ color: "var(--text-muted)" }}>คงเหลือ</div>
-          <div className="text-lg font-semibold" style={{ color: "var(--text)" }}>
-            {String(d.credits_remaining ?? "—")}
-          </div>
-        </div>
-      </div>
-      {/* Progress bar */}
-      {!!d.total_credits_required && d.credits_earned !== undefined && (
-        <div>
-          <div className="h-2 rounded-full overflow-hidden" style={{ background: "var(--surface-2)" }}>
-            <div
-              className="h-full rounded-full transition-all duration-500"
-              style={{
-                background: "var(--color-primary)",
-                width: `${Math.min(100, (Number(d.credits_earned) / Number(d.total_credits_required)) * 100)}%`,
-              }}
-            />
-          </div>
-          <div className="text-xs mt-1" style={{ color: "var(--text-muted)" }}>
-            {Number(d.credits_earned)}/{Number(d.total_credits_required)} หน่วยกิต
-          </div>
-        </div>
-      )}
-    </div>
+      </Typography>
+
+      <Box sx={{ display: "flex", gap: 2.5, mb: 2 }}>
+        {[
+          { label: "GPAX", value: d.gpax, accent: true },
+          { label: "หน่วยกิตที่ได้", value: d.credits_earned },
+          { label: "คงเหลือ", value: d.credits_remaining },
+        ].map(({ label, value, accent }) => (
+          <Box key={label}>
+            <Typography variant="caption" sx={{ color: dark ? "#a3a3ab" : "#5f6368", display: "block" }}>
+              {label}
+            </Typography>
+            <Typography variant="h6" sx={{
+              fontWeight: 700, lineHeight: 1.2,
+              color: accent ? "#e86020" : (dark ? "#e6e6e9" : "#1b1b1f"),
+              fontSize: "1.15rem",
+            }}>
+              {String(value ?? "—")}
+            </Typography>
+          </Box>
+        ))}
+      </Box>
+
+      <LinearProgress
+        variant="determinate"
+        value={pct}
+        sx={{
+          height: 8, borderRadius: 999,
+          background: dark ? "rgba(255,255,255,0.1)" : "rgba(0,0,0,0.07)",
+          "& .MuiLinearProgress-bar": {
+            borderRadius: 999,
+            background: "linear-gradient(90deg,#e86020,#ff9a60)",
+          },
+        }}
+      />
+      <Typography variant="caption" sx={{ mt: 0.5, display: "block",
+        color: dark ? "#a3a3ab" : "#5f6368" }}>
+        {earned} / {total} หน่วยกิต ({Math.round(pct)}%)
+      </Typography>
+    </Box>
   );
 }
 
-export default function AnswerCard({ card }: { card: CardData }) {
+export default function AnswerCard({ card, dark }: { card: CardData; dark: boolean }) {
   switch (card.card_type) {
-    case "grades":
-      return <GradeTable data={card.data} />;
-    case "progress":
-      return <ProgressCard data={card.data} />;
-    default:
-      return <GradeTable data={card.data} />;
+    case "progress": return <ProgressCard data={card.data} dark={dark} />;
+    default:         return <GradeTable  data={card.data} dark={dark} />;
   }
 }

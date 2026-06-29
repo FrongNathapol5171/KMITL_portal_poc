@@ -1,15 +1,13 @@
 import type { Metadata, Viewport } from "next";
 import "./globals.css";
+import Providers from "./providers";
 
 export const metadata: Metadata = {
   title: "AskKMITL",
   description: "Your KMITL academic assistant",
   manifest: "/manifest.webmanifest",
   appleWebApp: { capable: true, statusBarStyle: "default", title: "AskKMITL" },
-  icons: {
-    icon: "/icons/icon-192.png",
-    apple: "/icons/apple-touch-icon.png",
-  },
+  icons: { icon: "/icons/icon-192.png", apple: "/icons/apple-touch-icon.png" },
 };
 
 export const viewport: Viewport = {
@@ -21,10 +19,9 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="th" className="h-full" suppressHydrationWarning>
-      <body className="h-full flex flex-col antialiased"
-            style={{ fontFamily: "var(--font-sans)", background: "var(--bg)", color: "var(--text)" }}>
-        {children}
+    <html lang="th" suppressHydrationWarning>
+      <body style={{ margin: 0, height: "100dvh", display: "flex", flexDirection: "column" }}>
+        <Providers>{children}</Providers>
       </body>
     </html>
   );
