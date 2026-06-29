@@ -7,7 +7,7 @@ export const metadata: Metadata = {
   description: "Your all-in-one KMITL student portal",
   manifest: "/manifest.webmanifest",
   appleWebApp: { capable: true, statusBarStyle: "default", title: "KMITL One" },
-  icons: { icon: "/icons/icon-192.png", apple: "/icons/apple-touch-icon.png" },
+  icons: { icon: "/icons/icon-192.png", apple: "/apple-icon.png" },
 };
 
 export const viewport: Viewport = {
