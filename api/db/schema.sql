@@ -147,7 +147,7 @@ SELECT
     e.term,
     e.grade,
     e.grade_point,
-    e.credits     -- joined from courses for convenience
+    c.credits
 FROM enrolments e
 JOIN students s  USING (student_id)
 JOIN courses  c  ON e.course_id = c.course_id;
