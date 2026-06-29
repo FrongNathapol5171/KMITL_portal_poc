@@ -1,7 +1,6 @@
 FROM node:22-alpine AS deps
 WORKDIR /app
 COPY package*.json ./
-# Install ALL deps (including dev) — needed for TypeScript + Tailwind build
 RUN npm ci
 
 FROM node:22-alpine AS builder
@@ -9,6 +8,8 @@ WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 ENV NEXT_TELEMETRY_DISABLED=1
+# Enable standalone output only for Docker builds
+ENV NEXT_OUTPUT=standalone
 RUN npm run build
 
 FROM node:22-alpine AS runner
