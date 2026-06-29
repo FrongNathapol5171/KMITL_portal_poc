@@ -1,0 +1,21 @@
+@import url("https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@400;600&family=Roboto:wght@400;500;600&family=Inter:wght@400;500;600&display=swap");
+@import "tailwindcss";
+@import "../styles/tokens.css";
+
+@theme inline {
+  --color-primary:        var(--color-primary);
+  --color-primary-hover:  var(--color-primary-hover);
+  --color-primary-text:   var(--color-primary-text);
+  --color-primary-tint:   var(--color-primary-tint);
+  --color-bg:             var(--bg);
+  --color-surface:        var(--surface);
+  --color-surface-2:      var(--surface-2);
+  --color-border:         var(--border);
+  --color-text:           var(--text);
+  --color-text-muted:     var(--text-muted);
+  --font-sans:            var(--font-sans);
+  --radius-sm:            var(--radius-sm);
+  --radius-md:            var(--radius-md);
+  --radius-lg:            var(--radius-lg);
+  --radius-pill:          var(--radius-pill);
+}

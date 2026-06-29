@@ -1,0 +1,20 @@
+[
+  {
+    "program_id": 1,
+    "name": "Business Analytics and Statistics",
+    "degree_level": "master",
+    "total_credits_required": 36
+  },
+  {
+    "program_id": 2,
+    "name": "Computer Science",
+    "degree_level": "bachelor",
+    "total_credits_required": 134
+  },
+  {
+    "program_id": 3,
+    "name": "Data Science and Artificial Intelligence",
+    "degree_level": "bachelor",
+    "total_credits_required": 130
+  }
+]

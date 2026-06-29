@@ -1,0 +1,80 @@
+/* AskKMITL Design Tokens — §8 (02_SOFTWARE_SPEC.md) */
+/* Google Sans is proprietary; falls back to Roboto/Inter (01_REQUIREMENT_SPEC §7) */
+
+/* @import must precede other rules — moved to globals.css @layer */
+
+:root {
+  /* ── Brand ──────────────────────────────────────────────── */
+  --color-primary:        #e86020;
+  --color-primary-hover:  #d4541a;
+  --color-primary-press:  #b8431a;
+  --color-primary-text:   #9c3614; /* AA-safe for small text on white */
+  --color-primary-tint:   #fce9df;
+  --color-primary-on-dark:#ff7a45;
+
+  /* ── Neutrals ────────────────────────────────────────────── */
+  --bg:            #ffffff;
+  --surface:       #f7f7f8;
+  --surface-2:     #efeff1;
+  --border:        #e3e3e6;
+  --text:          #1b1b1f;
+  --text-muted:    #5f6368;
+
+  /* ── Feedback ────────────────────────────────────────────── */
+  --success: #1e8e3e;
+  --warning: #f29900;
+  --danger:  #d93025;
+
+  /* ── Shape ───────────────────────────────────────────────── */
+  --radius-sm:   8px;
+  --radius-md:  16px;
+  --radius-lg:  24px;
+  --radius-pill: 999px;
+
+  /* ── Elevation ───────────────────────────────────────────── */
+  --shadow-1: 0 1px 2px rgba(0,0,0,.06), 0 2px 8px rgba(0,0,0,.04);
+
+  /* ── Typography ──────────────────────────────────────────── */
+  --font-sans: "Google Sans", "Google Sans Text", "Roboto", "Inter",
+               system-ui, -apple-system, "Noto Sans Thai", sans-serif;
+  --font-size-display:  28px;
+  --font-size-title:    20px;
+  --font-size-body:     16px;
+  --font-size-caption:  13px;
+  --font-weight-regular: 400;
+  --font-weight-medium:  500;
+  --font-weight-semibold:600;
+  --line-height:         1.5;
+
+  /* ── Motion ──────────────────────────────────────────────── */
+  --duration-fast:   150ms;
+  --duration-normal: 250ms;
+  --easing:          cubic-bezier(0.2, 0, 0, 1);
+}
+
+[data-theme="dark"] {
+  --bg:        #131316;
+  --surface:   #1c1c20;
+  --surface-2: #26262b;
+  --border:    #34343a;
+  --text:      #e6e6e9;
+  --text-muted:#a3a3ab;
+  --color-primary:      #ff7a45;
+  --color-primary-tint: #3a2417;
+}
+
+/* ── Base resets ─────────────────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html {
+  font-family: var(--font-sans);
+  font-size: var(--font-size-body);
+  line-height: var(--line-height);
+  -webkit-font-smoothing: antialiased;
+  color: var(--text);
+  background: var(--bg);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { transition-duration: 0.01ms !important; }
+}

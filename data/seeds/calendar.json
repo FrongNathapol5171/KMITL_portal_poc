@@ -1,0 +1,22 @@
+[
+  {"term": "2023-1", "event_type": "term_start",        "start_date": "2023-08-07", "end_date": "2023-08-07"},
+  {"term": "2023-1", "event_type": "add_drop",          "start_date": "2023-08-07", "end_date": "2023-08-18"},
+  {"term": "2023-1", "event_type": "withdrawal_deadline","start_date": "2023-10-20", "end_date": "2023-10-20"},
+  {"term": "2023-1", "event_type": "final_exam",        "start_date": "2023-11-20", "end_date": "2023-12-01"},
+  {"term": "2023-1", "event_type": "term_end",          "start_date": "2023-12-01", "end_date": "2023-12-01"},
+  {"term": "2023-2", "event_type": "term_start",        "start_date": "2024-01-08", "end_date": "2024-01-08"},
+  {"term": "2023-2", "event_type": "add_drop",          "start_date": "2024-01-08", "end_date": "2024-01-19"},
+  {"term": "2023-2", "event_type": "withdrawal_deadline","start_date": "2024-03-22", "end_date": "2024-03-22"},
+  {"term": "2023-2", "event_type": "final_exam",        "start_date": "2024-04-22", "end_date": "2024-05-03"},
+  {"term": "2023-2", "event_type": "term_end",          "start_date": "2024-05-03", "end_date": "2024-05-03"},
+  {"term": "2024-1", "event_type": "term_start",        "start_date": "2024-08-05", "end_date": "2024-08-05"},
+  {"term": "2024-1", "event_type": "add_drop",          "start_date": "2024-08-05", "end_date": "2024-08-16"},
+  {"term": "2024-1", "event_type": "withdrawal_deadline","start_date": "2024-10-18", "end_date": "2024-10-18"},
+  {"term": "2024-1", "event_type": "final_exam",        "start_date": "2024-11-18", "end_date": "2024-11-29"},
+  {"term": "2024-1", "event_type": "term_end",          "start_date": "2024-11-29", "end_date": "2024-11-29"},
+  {"term": "2024-2", "event_type": "term_start",        "start_date": "2025-01-06", "end_date": "2025-01-06"},
+  {"term": "2024-2", "event_type": "add_drop",          "start_date": "2025-01-06", "end_date": "2025-01-17"},
+  {"term": "2024-2", "event_type": "withdrawal_deadline","start_date": "2025-03-21", "end_date": "2025-03-21"},
+  {"term": "2024-2", "event_type": "final_exam",        "start_date": "2025-04-21", "end_date": "2025-05-02"},
+  {"term": "2024-2", "event_type": "term_end",          "start_date": "2025-05-02", "end_date": "2025-05-02"}
+]
