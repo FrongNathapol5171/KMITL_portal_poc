@@ -1,25 +1,41 @@
 "use client";
 import { useState, useEffect } from "react";
 import Box from "@mui/material/Box";
-import IconButton from "@mui/material/IconButton";
-import Tooltip from "@mui/material/Tooltip";
-import DarkModeIcon from "@mui/icons-material/DarkMode";
-import LightModeIcon from "@mui/icons-material/LightMode";
 import ChatScreen from "@/components/ChatScreen";
+import UserMenu, { UserInfo } from "@/components/UserMenu";
 
 export default function Home() {
   const [dark, setDark] = useState(false);
+  const [user, setUser] = useState<UserInfo | null>(null);
 
   useEffect(() => {
     const saved = localStorage.getItem("theme");
     const preferred = window.matchMedia("(prefers-color-scheme: dark)").matches;
     setDark(saved ? saved === "dark" : preferred);
+
+    const savedUser = localStorage.getItem("kmitl_user");
+    if (savedUser) {
+      try { setUser(JSON.parse(savedUser)); } catch { /* ignore */ }
+    }
   }, []);
 
   const toggle = () => {
     const next = !dark;
     setDark(next);
     localStorage.setItem("theme", next ? "dark" : "light");
+  };
+
+  const handleLogin = (studentId: string) => {
+    const existing = localStorage.getItem("kmitl_user");
+    if (existing) {
+      try {
+        const parsed = JSON.parse(existing) as UserInfo;
+        if (parsed.studentId === studentId) { setUser(parsed); return; }
+      } catch { /* ignore */ }
+    }
+    const newUser: UserInfo = { studentId, name: studentId, gradientIndex: 0 };
+    localStorage.setItem("kmitl_user", JSON.stringify(newUser));
+    setUser(newUser);
   };
 
   return (
@@ -72,20 +88,18 @@ export default function Home() {
             KMITL One Portal
           </Box>
         </Box>
-        <Tooltip title={dark ? "Light mode" : "Dark mode"}>
-          <IconButton onClick={toggle} size="small"
-            sx={{ color: dark ? "#a3a3ab" : "#5f6368",
-              bgcolor: dark ? "rgba(255,255,255,0.08)" : "rgba(0,0,0,0.05)",
-              "&:hover": { bgcolor: dark ? "rgba(255,255,255,0.14)" : "rgba(0,0,0,0.09)" },
-              transition: "all 0.2s" }}>
-            {dark ? <LightModeIcon fontSize="small" /> : <DarkModeIcon fontSize="small" />}
-          </IconButton>
-        </Tooltip>
+
+        <UserMenu
+          user={user}
+          dark={dark}
+          onToggleDark={toggle}
+          onUserChange={setUser}
+        />
       </Box>
 
       {/* Chat */}
       <Box sx={{ flex: 1, overflow: "hidden", position: "relative", zIndex: 5 }}>
-        <ChatScreen dark={dark} />
+        <ChatScreen dark={dark} onLogin={handleLogin} />
       </Box>
     </Box>
   );

@@ -19,9 +19,12 @@ const SUGGESTIONS = [
   "วิธีถอนรายวิชา",
 ];
 
-interface ChatScreenProps { dark: boolean }
+interface ChatScreenProps {
+  dark: boolean;
+  onLogin?: (studentId: string) => void;
+}
 
-export default function ChatScreen({ dark }: ChatScreenProps) {
+export default function ChatScreen({ dark, onLogin }: ChatScreenProps) {
   const [messages, setMessages]           = useState<Message[]>([]);
   const [loading, setLoading]             = useState(false);
   const [showAuth, setShowAuth]           = useState(false);
@@ -120,18 +123,23 @@ export default function ChatScreen({ dark }: ChatScreenProps) {
         <div ref={bottomRef} />
       </Box>
 
-      {/* Suggestions */}
-      {isEmpty && (
-        <Fade in timeout={800}>
-          <Box sx={{ pb: 1.5 }}>
-            <SuggestionChips suggestions={SUGGESTIONS} onSelect={handleSend}
-              disabled={loading} dark={dark} />
-          </Box>
-        </Fade>
-      )}
+      {/* Suggestions — always above composer, compact scroll when chat active */}
+      <Box sx={{ pb: 1 }}>
+        {isEmpty ? (
+          <Fade in timeout={800}>
+            <Box>
+              <SuggestionChips suggestions={SUGGESTIONS} onSelect={handleSend}
+                disabled={loading} dark={dark} />
+            </Box>
+          </Fade>
+        ) : (
+          <SuggestionChips suggestions={SUGGESTIONS} onSelect={handleSend}
+            disabled={loading} dark={dark} compact />
+        )}
+      </Box>
 
       {/* Composer */}
-      <Box sx={{ pb: "max(12px, env(safe-area-inset-bottom))", pb2: 1.5 }}>
+      <Box sx={{ pb: "max(12px, env(safe-area-inset-bottom))" }}>
         <Composer onSend={handleSend} disabled={loading} dark={dark} />
       </Box>
 
@@ -140,6 +148,7 @@ export default function ChatScreen({ dark }: ChatScreenProps) {
         <AuthSheet
           dark={dark}
           onSuccess={handleAuthSuccess}
+          onLogin={onLogin}
           onDismiss={() => { setShowAuth(false); setPendingMsg(null); }}
         />
       )}

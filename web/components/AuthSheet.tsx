@@ -15,10 +15,11 @@ import { login } from "@/lib/api";
 interface AuthSheetProps {
   onSuccess: () => void;
   onDismiss: () => void;
+  onLogin?: (studentId: string) => void;
   dark: boolean;
 }
 
-export default function AuthSheet({ onSuccess, onDismiss, dark }: AuthSheetProps) {
+export default function AuthSheet({ onSuccess, onDismiss, onLogin, dark }: AuthSheetProps) {
   const [studentId, setStudentId] = useState("");
   const [loading, setLoading]     = useState(false);
   const [error, setError]         = useState("");
@@ -29,6 +30,7 @@ export default function AuthSheet({ onSuccess, onDismiss, dark }: AuthSheetProps
     setLoading(true); setError("");
     try {
       await login(studentId.trim(), studentId.trim());
+      onLogin?.(studentId.trim());
       onSuccess();
     } catch {
       setError("ไม่พบรหัสนักศึกษา กรุณาตรวจสอบอีกครั้ง");
