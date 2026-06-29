@@ -1,16 +1,18 @@
 """
 Text-to-SQL Engine — Tier B/C (§3.3, FR-B1…B5).
 Uses pre-built parameterised templates for common queries;
-falls back to LLM-generated SQL validated against an allow-list.
+falls back to Gemini-generated SQL validated against an allow-list.
 """
 
+import re
 from typing import AsyncGenerator
+
+import google.generativeai as genai
 from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from api.config import settings
 
-# Allow-listed views and columns for free-form Text-to-SQL
 ALLOWED_VIEWS = {"v_my_grades", "v_my_progress"}
 
 TEMPLATE_QUERIES = {
@@ -53,7 +55,6 @@ async def answer_personal(
     intent: str,
     db: AsyncSession,
 ) -> AsyncGenerator[dict, None]:
-    """Stream a personalised answer for Tier-B/C queries."""
     template_key = _detect_template(message)
 
     if template_key and template_key in TEMPLATE_QUERIES:
@@ -62,22 +63,19 @@ async def answer_personal(
         rows = result.mappings().all()
 
         if not rows:
-            yield {"type": "token", "text": "ไม่พบข้อมูลสำหรับบัญชีของคุณครับ" if locale == "th"
-                   else "No data found for your account."}
+            yield {
+                "type": "token",
+                "text": "ไม่พบข้อมูลสำหรับบัญชีของคุณครับ"
+                        if locale == "th" else "No data found for your account.",
+            }
             yield {"type": "done"}
             return
 
-        # Emit as a structured card
-        yield {
-            "type": "card",
-            "card_type": template_key,
-            "data": [dict(r) for r in rows],
-        }
+        yield {"type": "card", "card_type": template_key, "data": [dict(r) for r in rows]}
         yield {"type": "done"}
 
     else:
-        # LLM-generated SQL (restricted to allowed views)
-        generated = await _llm_sql(message, student_hash)
+        generated = await _gemini_sql(message)
         if not generated:
             yield {
                 "type": "token",
@@ -98,9 +96,9 @@ async def answer_personal(
             yield {"type": "done"}
 
 
-async def _llm_sql(message: str, student_hash: str) -> str | None:
-    """Generate and validate SQL via LLM. Returns None if invalid."""
-    import anthropic, re
+async def _gemini_sql(message: str) -> str | None:
+    """Generate and validate SQL via Gemini. Returns None if invalid."""
+    genai.configure(api_key=settings.GEMINI_API_KEY)
 
     schema_hint = """
     Available views (read-only, student_hash-scoped):
@@ -110,29 +108,22 @@ async def _llm_sql(message: str, student_hash: str) -> str | None:
     Always include WHERE student_hash = :sh
     """
 
-    client = anthropic.Anthropic(api_key=settings.LLM_API_KEY)
-    resp = client.messages.create(
-        model=settings.LLM_MODEL,
-        max_tokens=256,
-        temperature=0,
-        messages=[{
-            "role": "user",
-            "content": (
-                f"Generate a single SQL SELECT query to answer: {message}\n"
-                f"Schema:\n{schema_hint}\n"
-                "Return ONLY the SQL, nothing else."
-            ),
-        }],
+    model = genai.GenerativeModel(
+        model_name=settings.LLM_MODEL,
+        generation_config={"temperature": 0, "max_output_tokens": 256},
     )
-    sql = resp.content[0].text.strip()
+    resp = model.generate_content(
+        f"Generate a single SQL SELECT query to answer: {message}\n"
+        f"Schema:\n{schema_hint}\n"
+        "Return ONLY the SQL statement, no markdown, no explanation."
+    )
+    sql = resp.text.strip().lstrip("```sql").rstrip("```").strip()
 
-    # Safety: reject writes, DDL, or queries without the scope filter
     sql_upper = sql.upper()
     if any(kw in sql_upper for kw in ("INSERT", "UPDATE", "DELETE", "DROP", "CREATE", "ALTER", "TRUNCATE")):
         return None
     if ":SH" not in sql_upper and "STUDENT_HASH" not in sql_upper:
         return None
-    # Must reference only allowed views
     tables = re.findall(r"FROM\s+(\w+)|JOIN\s+(\w+)", sql_upper)
     found = {t for pair in tables for t in pair if t}
     if not found.issubset({v.upper() for v in ALLOWED_VIEWS}):

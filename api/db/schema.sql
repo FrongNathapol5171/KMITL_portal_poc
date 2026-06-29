@@ -129,7 +129,7 @@ CREATE TABLE doc_chunks (
     section    TEXT,
     source_url TEXT,
     content    TEXT NOT NULL,
-    embedding  VECTOR(1536)            -- OpenAI text-embedding-3-small dim
+    embedding  VECTOR(768)             -- Gemini text-embedding-004 dim
 );
 
 CREATE INDEX idx_doc_chunks_embedding ON doc_chunks

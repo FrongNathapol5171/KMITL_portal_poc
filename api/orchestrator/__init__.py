@@ -1,13 +1,16 @@
 """
 Agent Orchestrator — intent router (§3.1).
 Classifies each turn and dispatches to RAG / Text-to-SQL / Tools.
+Uses Google Gemini for intent classification.
 """
 
+import json
 import time
 from typing import AsyncGenerator
 
-from api.config import settings
+import google.generativeai as genai
 
+from api.config import settings
 
 INTENT_PROMPT = """
 You are the intent classifier for AskKMITL, a university student portal.
@@ -19,7 +22,9 @@ Classify the student's message into exactly one intent label:
 - smalltalk        : greetings, thanks, chitchat
 - other            : anything outside university scope
 
-Reply with a JSON object: {"intent": "<label>", "topic": "<short topic tag>"}
+Reply with a JSON object only — no markdown, no extra text:
+{"intent": "<label>", "topic": "<short topic tag>"}
+
 Topic tag examples: registration, thesis, grades, withdrawal, deadline, grade_anxiety,
 scholarship, curriculum, credits, gpa_simulation, course_info, degree_audit, other.
 
@@ -27,18 +32,22 @@ Student message:
 """
 
 
-async def classify_intent(message: str) -> dict:
-    """Use LLM to classify intent (low temperature for determinism)."""
-    import anthropic, json
-
-    client = anthropic.Anthropic(api_key=settings.LLM_API_KEY)
-    resp = client.messages.create(
-        model=settings.LLM_MODEL,
-        max_tokens=64,
-        temperature=0,
-        messages=[{"role": "user", "content": INTENT_PROMPT + message}],
+def _get_client() -> genai.GenerativeModel:
+    genai.configure(api_key=settings.GEMINI_API_KEY)
+    return genai.GenerativeModel(
+        model_name=settings.LLM_MODEL,
+        generation_config={"temperature": 0, "max_output_tokens": 64},
     )
-    text = resp.content[0].text.strip()
+
+
+async def classify_intent(message: str) -> dict:
+    """Use Gemini to classify intent (temperature=0 for determinism)."""
+    model = _get_client()
+    resp = model.generate_content(INTENT_PROMPT + message)
+    text = resp.text.strip()
+    # Strip possible markdown fences
+    if text.startswith("```"):
+        text = text.split("```")[1].lstrip("json").strip()
     try:
         return json.loads(text)
     except Exception:
@@ -94,14 +103,11 @@ async def route(
     latency_ms = int((time.monotonic() - t0) * 1000)
 
     # Log every turn (FR-D1)
-    from api.logger import log_event
-
-    # raw_query stored only if student has consented
     raw_q = None
     if student_hash and db:
-        from sqlalchemy import text
+        from sqlalchemy import text as sa_text
         row = await db.execute(
-            text("SELECT consent_analytics FROM students WHERE student_hash = :h"),
+            sa_text("SELECT consent_analytics FROM students WHERE student_hash = :h"),
             {"h": student_hash},
         )
         r = row.fetchone()
@@ -109,6 +115,7 @@ async def route(
             raw_q = message
 
     if db:
+        from api.logger import log_event
         await log_event(
             db,
             student_hash=student_hash,
