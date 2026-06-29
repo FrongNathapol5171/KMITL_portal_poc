@@ -20,7 +20,7 @@ import Tooltip from "@mui/material/Tooltip";
 import EditIcon from "@mui/icons-material/Edit";
 import PaletteIcon from "@mui/icons-material/Palette";
 import LogoutIcon from "@mui/icons-material/Logout";
-import PersonOutlineIcon from "@mui/icons-material/PersonOutline";
+import PersonOutlineIcon from "@mui/icons-material/PersonOutlined";
 import CheckIcon from "@mui/icons-material/Check";
 import DarkModeIcon from "@mui/icons-material/DarkMode";
 import LightModeIcon from "@mui/icons-material/LightMode";
@@ -181,7 +181,7 @@ export default function UserMenu({ user, dark, onToggleDark, onUserChange }: Use
               <ListItemIcon sx={{ color: dark ? "#a3a3ab" : "#5f6368", minWidth: 36 }}>
                 <EditIcon fontSize="small" />
               </ListItemIcon>
-              <ListItemText primary="แก้ไขชื่อที่แสดง" primaryTypographyProps={{ fontSize: "0.875rem" }} />
+              <ListItemText primary="แก้ไขชื่อที่แสดง" slotProps={{ primary: { sx: { fontSize: "0.875rem" } } }} />
             </MenuItem>
 
             <MenuItem onClick={() => { setAnchorEl(null); setPicked(user.gradientIndex); setEditAvtOpen(true); }}
@@ -191,7 +191,7 @@ export default function UserMenu({ user, dark, onToggleDark, onUserChange }: Use
               <ListItemIcon sx={{ color: dark ? "#a3a3ab" : "#5f6368", minWidth: 36 }}>
                 <PaletteIcon fontSize="small" />
               </ListItemIcon>
-              <ListItemText primary="เปลี่ยนสี Avatar" primaryTypographyProps={{ fontSize: "0.875rem" }} />
+              <ListItemText primary="เปลี่ยนสี Avatar" slotProps={{ primary: { sx: { fontSize: "0.875rem" } } }} />
             </MenuItem>
 
             <Divider sx={{ my: 0.5, borderColor: dark ? "rgba(255,255,255,0.08)" : "rgba(0,0,0,0.06)" }} />
@@ -202,7 +202,7 @@ export default function UserMenu({ user, dark, onToggleDark, onUserChange }: Use
               <ListItemIcon sx={{ color: "#d93025", minWidth: 36 }}>
                 <LogoutIcon fontSize="small" />
               </ListItemIcon>
-              <ListItemText primary="ออกจากระบบ" primaryTypographyProps={{ fontSize: "0.875rem" }} />
+              <ListItemText primary="ออกจากระบบ" slotProps={{ primary: { sx: { fontSize: "0.875rem" } } }} />
             </MenuItem>
           </>
         )}
@@ -217,11 +217,11 @@ export default function UserMenu({ user, dark, onToggleDark, onUserChange }: Use
 
       {/* Edit name dialog */}
       <Dialog open={editNameOpen} onClose={() => setEditNameOpen(false)}
-        PaperProps={{ sx: {
+        slotProps={{ paper: { sx: {
           borderRadius: "20px", minWidth: 320,
           background: dark ? "#1c1c20" : "#fff",
           backgroundImage: "none",
-        }}}>
+        }}}}>
         <DialogTitle sx={{ fontWeight: 700, pb: 1,
           color: dark ? "#e6e6e9" : "#1b1b1f" }}>
           แก้ไขชื่อที่แสดง
@@ -263,11 +263,11 @@ export default function UserMenu({ user, dark, onToggleDark, onUserChange }: Use
 
       {/* Avatar color picker dialog */}
       <Dialog open={editAvtOpen} onClose={() => setEditAvtOpen(false)}
-        PaperProps={{ sx: {
+        slotProps={{ paper: { sx: {
           borderRadius: "20px", minWidth: 300,
           background: dark ? "#1c1c20" : "#fff",
           backgroundImage: "none",
-        }}}>
+        }}}}>
         <DialogTitle sx={{ fontWeight: 700, pb: 1,
           color: dark ? "#e6e6e9" : "#1b1b1f" }}>
           เลือกสี Avatar
