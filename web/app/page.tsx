@@ -69,7 +69,7 @@ export default function Home() {
           }}>K</Box>
           <Box sx={{ fontWeight: 700, fontSize: 16,
             color: dark ? "#e6e6e9" : "#1b1b1f" }}>
-            AskKMITL
+            KMITL One Portal
           </Box>
         </Box>
         <Tooltip title={dark ? "Light mode" : "Dark mode"}>

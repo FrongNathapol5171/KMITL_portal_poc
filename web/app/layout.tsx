@@ -3,10 +3,10 @@ import "./globals.css";
 import Providers from "./providers";
 
 export const metadata: Metadata = {
-  title: "AskKMITL",
-  description: "Your KMITL academic assistant",
+  title: "KMITL One Portal",
+  description: "Your all-in-one KMITL student portal",
   manifest: "/manifest.webmanifest",
-  appleWebApp: { capable: true, statusBarStyle: "default", title: "AskKMITL" },
+  appleWebApp: { capable: true, statusBarStyle: "default", title: "KMITL One" },
   icons: { icon: "/icons/icon-192.png", apple: "/icons/apple-touch-icon.png" },
 };
 

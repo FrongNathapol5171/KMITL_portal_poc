@@ -1,7 +1,7 @@
 {
-  "name": "AskKMITL",
-  "short_name": "AskKMITL",
-  "description": "Your KMITL academic assistant",
+  "name": "KMITL One Portal",
+  "short_name": "KMITL One",
+  "description": "Your all-in-one KMITL student portal",
   "display": "standalone",
   "start_url": "/",
   "theme_color": "#e86020",

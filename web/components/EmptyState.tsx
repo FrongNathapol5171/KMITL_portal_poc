@@ -37,7 +37,7 @@ export default function EmptyState({ dark }: EmptyStateProps) {
           color: dark ? "#e6e6e9" : "#1b1b1f",
           fontSize: { xs: "1.3rem", sm: "1.5rem" },
         }}>
-          Ask KMITL Anything
+          KMITL One Portal
         </Typography>
         <Typography variant="body2" sx={{ color: dark ? "#a3a3ab" : "#5f6368", maxWidth: 320, mx: "auto" }}>
           ถามเรื่องหลักสูตร เกรด วิทยานิพนธ์ หรือข้อมูลนักศึกษาได้เลยครับ
